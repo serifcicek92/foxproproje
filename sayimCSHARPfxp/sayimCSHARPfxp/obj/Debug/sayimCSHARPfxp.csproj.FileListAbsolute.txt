@@ -1,0 +1,8 @@
+C:\net\sevkiyatkod\SAYIM\foxproproje\sayimCSHARPfxp\sayimCSHARPfxp\bin\Debug\sayimCSHARPfxp.exe.config
+C:\net\sevkiyatkod\SAYIM\foxproproje\sayimCSHARPfxp\sayimCSHARPfxp\bin\Debug\sayimCSHARPfxp.exe
+C:\net\sevkiyatkod\SAYIM\foxproproje\sayimCSHARPfxp\sayimCSHARPfxp\bin\Debug\sayimCSHARPfxp.pdb
+C:\net\sevkiyatkod\SAYIM\foxproproje\sayimCSHARPfxp\sayimCSHARPfxp\obj\Debug\sayimCSHARPfxp.csprojAssemblyReference.cache
+C:\net\sevkiyatkod\SAYIM\foxproproje\sayimCSHARPfxp\sayimCSHARPfxp\obj\Debug\Interop.serifsayim.dll
+C:\net\sevkiyatkod\SAYIM\foxproproje\sayimCSHARPfxp\sayimCSHARPfxp\obj\Debug\sayimCSHARPfxp.csproj.ResolveComReference.cache
+C:\net\sevkiyatkod\SAYIM\foxproproje\sayimCSHARPfxp\sayimCSHARPfxp\obj\Debug\sayimCSHARPfxp.exe
+C:\net\sevkiyatkod\SAYIM\foxproproje\sayimCSHARPfxp\sayimCSHARPfxp\obj\Debug\sayimCSHARPfxp.pdb
