@@ -88,12 +88,17 @@ DEFINE CLASS sayim AS Custom OLEPUBLIC
 		**a = this.wlogon("um1","\\BSERVER","123456")
 		
 **SELÇUK		
-		a = this.wlogon("um1","\\BSERVER","123456")
-		this._BoyutPath="\\BSERVER\BOYUT\DATA\"
-		this._BoyutDrive="\\BSERVER\BOYUT\"
+		**a = this.wlogon("um1","\\BSERVER","123456")
+		**this._BoyutPath="\\BSERVER\BOYUT\DATA\"
+		**this._BoyutDrive="\\BSERVER\BOYUT\"
 		
 		
-
+**Kaðýthane 8
+		a = this.wlogon("um1","\\10.5.0.9","123456")
+		this._BoyutPath="\\10.5.0.9\BOYUT\DATA\"
+		this._BoyutDrive="\\10.5.0.9\BOYUT\"
+		
+**
 		*this._BoyutPath="\\192.168.3.11\Boyut\seldata\"
 		**this._BoyutDrive="\\192.168.3.11\Boyut\"
 		**a = this.wlogon("um1","\\192.168.3.11","123456")
@@ -548,7 +553,7 @@ DEFINE CLASS sayim AS Custom OLEPUBLIC
 				jsonString = jsonString + "'ilackodu':'"+ALLTRIM(STR(ilc.ilackodu))+"',"
 				jsonString = jsonString + "'kututipi':'"+ALLTRIM(prt.kututipi)+"',"
 				jsonString = jsonString + "'fiyati':'"+ALLTRIM(STR(prt.CFiyati,15))+"',"
-				**jsonString = jsonString + "'raf':'"+ALLTRIM(prt.raf)+"',"
+				**jsonString = jsonString + "'raf':'"+ALLTRIM(prt.raf)+"'," 
 				jsonString = jsonString + "'raf':'"+ALLTRIM(AMBARRAFF)+"',"
 				jsonString = jsonString + "'miktari':'"+ALLTRIM(STR(prt.miktari))+"',"
 				jsonString = jsonString + "'beslemeyer':'"+ALLTRIM(BESLEMERAF)+"',"
@@ -659,9 +664,9 @@ DEFINE CLASS sayim AS Custom OLEPUBLIC
 		this.wlogout()
 		IF VARTYPE(_CEPNO)=="C" then
 			this.cepKod=_CEPNO
-			RETURN _CEPNO
+			RETURN SUBENO+"-"+_CEPNO
 		else
-			RETURN "01"
+			RETURN SUBENO+"-"+"01"
 		endif		 
 	ENDPROC
 	
