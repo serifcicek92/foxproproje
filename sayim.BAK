@@ -88,15 +88,15 @@ DEFINE CLASS sayim AS Custom OLEPUBLIC
 		**a = this.wlogon("um1","\\BSERVER","123456")
 		
 **SELÇUK		
-		**a = this.wlogon("um1","\\BSERVER","123456")
-		**this._BoyutPath="\\BSERVER\BOYUT\DATA\"
-		**this._BoyutDrive="\\BSERVER\BOYUT\"
+		a = this.wlogon("um1","\\BSERVER","123456")
+		this._BoyutPath="\\BSERVER\BOYUT\DATA\"
+		this._BoyutDrive="\\BSERVER\BOYUT\"
 		
 		
 **Kaðýthane 8
-		a = this.wlogon("um1","\\10.5.0.9","123456")
-		this._BoyutPath="\\10.5.0.9\BOYUT\DATA\"
-		this._BoyutDrive="\\10.5.0.9\BOYUT\"
+		**a = this.wlogon("um1","\\10.5.0.9","123456")
+		**this._BoyutPath="\\10.5.0.9\BOYUT\DATA\"
+		**this._BoyutDrive="\\10.5.0.9\BOYUT\"
 		
 **
 		*this._BoyutPath="\\192.168.3.11\Boyut\seldata\"
@@ -484,7 +484,7 @@ DEFINE CLASS sayim AS Custom OLEPUBLIC
 								
 				**ikd = ilc.ilackodu
 				ikd = ikodukod
-				?ikd
+				**?ikd
 				
 				USE &BPATH.ilaccep INDEX &BPATH.ILACCEP.CDX IN 0 SHARED ALIAS cpdpilclar				
 				SELECT cpdpilclar
@@ -545,6 +545,8 @@ DEFINE CLASS sayim AS Custom OLEPUBLIC
 				
 				IF LEN(ALLTRIM(prt.raf))<6 then
 					AMBARRAFF = ALLTRIM(prt.raf)+" "+AMBARRAFF
+				ELIF LEN(ALLTRIM(prt.raf))>5
+					AMBARRAFF = ALLTRIM(prt.raf)
 				ENDIF
 		
 				SELECT prt

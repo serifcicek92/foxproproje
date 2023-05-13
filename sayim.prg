@@ -484,7 +484,7 @@ DEFINE CLASS sayim AS Custom OLEPUBLIC
 								
 				**ikd = ilc.ilackodu
 				ikd = ikodukod
-				?ikd
+				**?ikd
 				
 				USE &BPATH.ilaccep INDEX &BPATH.ILACCEP.CDX IN 0 SHARED ALIAS cpdpilclar				
 				SELECT cpdpilclar
@@ -545,6 +545,8 @@ DEFINE CLASS sayim AS Custom OLEPUBLIC
 				
 				IF LEN(ALLTRIM(prt.raf))<6 then
 					AMBARRAFF = ALLTRIM(prt.raf)+" "+AMBARRAFF
+				ELSE LEN(ALLTRIM(prt.raf))>5
+					AMBARRAFF = ALLTRIM(prt.raf)
 				ENDIF
 		
 				SELECT prt
