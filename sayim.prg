@@ -93,17 +93,7 @@ DEFINE CLASS sayim AS Custom OLEPUBLIC
 		this._BoyutDrive="\\BSERVER\BOYUT\"
 		
 		
-**Kaðýthane 8
-		**a = this.wlogon("um1","\\10.5.0.9","123456")
-		**this._BoyutPath="\\10.5.0.9\BOYUT\DATA\"
-		**this._BoyutDrive="\\10.5.0.9\BOYUT\"
-		
-**
-		*this._BoyutPath="\\192.168.3.11\Boyut\seldata\"
-		**this._BoyutDrive="\\192.168.3.11\Boyut\"
-		**a = this.wlogon("um1","\\192.168.3.11","123456")
-		
-		IF DIRECTORY("\\BSERVER\BOYUTC\SELDATA") then
+		IF DIRECTORY("\\BSERVER\BOYUTC\SELDATA") then  
 			this._BoyutDrive="\\BSERVER\BOYUTC\"
 			this._BoyutPath="\\BSERVER\BOYUTC\SELDATA\"
 			return "oldu"
@@ -502,6 +492,8 @@ DEFINE CLASS sayim AS Custom OLEPUBLIC
 				
 				
 				**USE &BPATH.ilacprt INDEX &BPATH.ilacprt1.idx IN 0 SHARED ALIAS prt
+				**aþaðýdakini ekledim
+				SET DELETED ON 
 				USE &BPATH.ilacprt IN 0 SHARED ALIAS prt
 				SELECT prt
 				IF EMPTY(CDX(1))
@@ -741,6 +733,8 @@ DEFINE CLASS sayim AS Custom OLEPUBLIC
 		
 		**USE &BPATH.ilacprt INDEX &BPATH.ilacprt1.idx IN 0 SHARED ALIAS prt
 		**SET ORDER TO ILACPRT1
+		**alttakini ekledim
+		SET DELETED ON
 		USE &BPATH.ilacprt IN 0 SHARED ALIAS prt
 		SELECT prt
 		IF EMPTY(CDX(1))
