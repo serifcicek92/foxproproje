@@ -93,7 +93,12 @@ DEFINE CLASS sayim AS Custom OLEPUBLIC
 		this._BoyutDrive="\\BSERVER\BOYUT\"
 		
 		
-		IF DIRECTORY("\\BSERVER\BOYUTC\SELDATA") then  
+
+		*this._BoyutPath="\\192.168.3.11\Boyut\seldata\"
+		**this._BoyutDrive="\\192.168.3.11\Boyut\"
+		**a = this.wlogon("um1","\\192.168.3.11","123456")
+		
+		IF DIRECTORY("\\BSERVER\BOYUTC\SELDATA") then
 			this._BoyutDrive="\\BSERVER\BOYUTC\"
 			this._BoyutPath="\\BSERVER\BOYUTC\SELDATA\"
 			return "oldu"
@@ -136,7 +141,7 @@ DEFINE CLASS sayim AS Custom OLEPUBLIC
 		
 		
 		**			**this.wlogout()
-		**return "olmadý"
+		**return "olmady"
 		
 		
 		**IF directory("G:") = .T. then
@@ -176,7 +181,7 @@ DEFINE CLASS sayim AS Custom OLEPUBLIC
 	**	this._Reyon = Reyon
 		**this._Tanim = Tanim		
 	**ENDPROC
-**SAYIM GÝR	
+**SAYIM GYR	
 	PROCEDURE Sayimbilgilerigir(Reyon,Raf,Tanim,SayanKisi,Giren,GZaman,IlacKodu,GFiyati,GKutuTipi,GMiad,GSeriNo,GMiktar,KDegisti,SayimDosyasi)
 			**this._KayitNo = KayitNo
 			this._Reyon = Reyon
@@ -205,7 +210,7 @@ DEFINE CLASS sayim AS Custom OLEPUBLIC
 		
 		INDEXADI = "sy"+sayimD+"1.i"+subesi
 		
-		**RETURN "sayimd-"+sayimD+"+INDEXADI-"+INDEXADI+"+subesi-"+subesi+"+Tablo adý-"+tabloAdi 
+		**RETURN "sayimd-"+sayimD+"+INDEXADI-"+INDEXADI+"+subesi-"+subesi+"+Tablo ady-"+tabloAdi 
 		this.getPath()
 		vAdi=""
 		**BPATH = "K:\data\"
@@ -229,7 +234,7 @@ DEFINE CLASS sayim AS Custom OLEPUBLIC
 		use &BPATH.&tabloAdi index &BPATH.&INDEXADI SHARED ALIAS sym
 		SELECT KayitNo FROM &BPATH.&tabloAdi INTO CURSOR crs
 		SELECT crs
-		this._KayitNo = RECCOUNT()+1
+		**this._KayitNo = RECCOUNT()+1
 		**iiiiii
 		**iiiiii
 		INDEXADIIKI = "sy"+sayimD+"2.i"+subesi
@@ -243,7 +248,7 @@ DEFINE CLASS sayim AS Custom OLEPUBLIC
 		SET ORDER TO "sy"+sayimD+"1"
 		GO BOTTOM 
 		APPEND BLANK
-		replace KayitNo WITH this._KayitNo,Reyon WITH this._Reyon,Graf WITH this._Raf,Tanim WITH this._Tanim,SayanKisi WITH this._SayanKisi,Giren WITH this._Giren,GZaman WITH INT(VAL(zamansayisi)),IlacKodu WITH INT(VAL(this._IlacKodu)),GFiyati WITH INT(VAL(this._GFiyati)),GKutuTipi WITH this._GKutuTipi,GMiad WITH this._GMiad,GSeriNo WITH this._GSeriNo,GMiktar WITH INT(VAL(this._GMiktar)),KDegisti WITH INT(VAL(this._KDegisti))
+		replace KayitNo WITH recno(),Reyon WITH this._Reyon,Graf WITH this._Raf,Tanim WITH this._Tanim,SayanKisi WITH this._SayanKisi,Giren WITH this._Giren,GZaman WITH INT(VAL(zamansayisi)),IlacKodu WITH INT(VAL(this._IlacKodu)),GFiyati WITH INT(VAL(this._GFiyati)),GKutuTipi WITH this._GKutuTipi,GMiad WITH this._GMiad,GSeriNo WITH this._GSeriNo,GMiktar WITH INT(VAL(this._GMiktar)),KDegisti WITH INT(VAL(this._KDegisti))
 		**int ler gzaman, ilackodu, gfiyati, gmiktar,d fiyati, dmiktar, bmiktar, sfiyati, smiktar, kdegisti
 		**INSERT INTO &BPATH.&tabloAdi(KayitNo,Reyon,Graf,Tanim,SayanKisi,Giren,GZaman,IlacKodu,GFiyati,GKutuTipi,GMiad,GSeriNo,GMiktar,KDegisti) VALUES (this._KayitNo,this._Reyon,this._Raf,this._Tanim,this._SayanKisi,this._Giren,INT(VAL(zamansayisi)),INT(VAL(this._IlacKodu)),INT(VAL(this._GFiyati)),this._GKutuTipi,this._GMiad,this._GSeriNo,INT(VAL(this._GMiktar)),INT(VAL(this._KDegisti)))
 		CLOSE DATABASES
@@ -387,7 +392,7 @@ DEFINE CLASS sayim AS Custom OLEPUBLIC
 		
 		**USE &BPATH		
 		
-		**REGÝON BARKOD.DBF
+		**REGYON BARKOD.DBF
 		IlackoduToBarkod=""
 		ikodukod="0"
 		
@@ -412,7 +417,7 @@ DEFINE CLASS sayim AS Custom OLEPUBLIC
 		txtHatalar = txtHatalar + "ilaçlar ilk found " +IIF(FOUND() = .T. ,"TRUE","FALSE")+"---"
 		
 		IF NOT FOUND()
-			txtHatalar = txtHatalar + "Barkod Ýlaclar Dosyasýnda Bulunamadý"
+			txtHatalar = txtHatalar + "Barkod Ylaclar Dosyasynda Bulunamady"
 			
 			USE &BPATH.BARKOD INDEX &BPATH.BARKOD.CDX SHARED ALIAS BKOD
 			SET ORDER TO BARKODU   && BARKODU
@@ -474,7 +479,7 @@ DEFINE CLASS sayim AS Custom OLEPUBLIC
 								
 				**ikd = ilc.ilackodu
 				ikd = ikodukod
-				**?ikd
+				?ikd
 				
 				USE &BPATH.ilaccep INDEX &BPATH.ILACCEP.CDX IN 0 SHARED ALIAS cpdpilclar				
 				SELECT cpdpilclar
@@ -486,6 +491,7 @@ DEFINE CLASS sayim AS Custom OLEPUBLIC
 				BESLEMERAF = cpdpilclar.beslemeyer
 				
 				BESLEMERAF = STRTRAN(BESLEMERAF,"\","\\")
+				**alttaki eklendi
 				AMBARRAFF =  STRTRAN(AMBARYERI,"\","\\")
 				
 				txtHatalar = txtHatalar + "--BESLEMERAF  : "+ BESLEMERAF + "--"
@@ -493,6 +499,9 @@ DEFINE CLASS sayim AS Custom OLEPUBLIC
 				
 				**USE &BPATH.ilacprt INDEX &BPATH.ilacprt1.idx IN 0 SHARED ALIAS prt
 				USE &BPATH.ilacprt IN 0 SHARED ALIAS prt
+				**aþaðýdakini ekledim
+				SET DELETED ON
+				
 				SELECT prt
 				IF EMPTY(CDX(1))
 					IF FILE(BPATH+"ilacprt3.idx")
@@ -533,19 +542,25 @@ DEFINE CLASS sayim AS Custom OLEPUBLIC
 					RETURN null
 				ENDIF 		
 				
+				
+				SELECT prt
+				
+				**aþaðýdakini ekledim 
 				IF LEN(ALLTRIM(prt.raf))<6 then
 					AMBARRAFF = ALLTRIM(prt.raf)+" "+AMBARRAFF
 				ELSE LEN(ALLTRIM(prt.raf))>5
 					AMBARRAFF = ALLTRIM(prt.raf)
 				ENDIF
+				
 		
-				SELECT prt
+				
 				jsonString = jsonString + "{'ilacadi':'"+STRTRAN(STRTRAN(ALLTRIM(ilc.ilacadi),"'"," "),"\"," ")+"',"
 				jsonString = jsonString + "'barkodu':'"+ALLTRIM(ilc.barkodu)+"',"
 				jsonString = jsonString + "'ilackodu':'"+ALLTRIM(STR(ilc.ilackodu))+"',"
 				jsonString = jsonString + "'kututipi':'"+ALLTRIM(prt.kututipi)+"',"
 				jsonString = jsonString + "'fiyati':'"+ALLTRIM(STR(prt.CFiyati,15))+"',"
-				**jsonString = jsonString + "'raf':'"+ALLTRIM(prt.raf)+"'," 
+				**aþaðýdaki düzenlendi
+				**jsonString = jsonString + "'raf':'"+ALLTRIM(prt.raf)+"',"
 				jsonString = jsonString + "'raf':'"+ALLTRIM(AMBARRAFF)+"',"
 				jsonString = jsonString + "'miktari':'"+ALLTRIM(STR(prt.miktari))+"',"
 				jsonString = jsonString + "'beslemeyer':'"+ALLTRIM(BESLEMERAF)+"',"
@@ -576,7 +591,7 @@ DEFINE CLASS sayim AS Custom OLEPUBLIC
 				
 				jsonString = jsonString +"}"				
 				
-				test = test + "-sonrasý"+ALLTRIM(STR(ilc.ilackodu))
+				test = test + "-sonrasy"+ALLTRIM(STR(ilc.ilackodu))
 				SELECT ilc
 				USE
 				** ctod(tarih)
@@ -585,7 +600,7 @@ DEFINE CLASS sayim AS Custom OLEPUBLIC
 			
 			RETURN jsonString	
 					
-			**RETURN TEST  + "-GELEN JSON STRÝNG:"+jsonString
+			**RETURN TEST  + "-GELEN JSON STRYNG:"+jsonString
 			RELEASE ALL
 			
 		ENDIF
@@ -594,7 +609,7 @@ DEFINE CLASS sayim AS Custom OLEPUBLIC
 		
 		
 	ENDPROC
-**ÝLAÇ PARTÝDEN SORGULAMA
+**YLAÇ PARTYDEN SORGULAMA
 	PROCEDURE getIlacPrt(Kodu,Cno)
 		this.getPath()
 		jsonString = ""
@@ -646,7 +661,7 @@ DEFINE CLASS sayim AS Custom OLEPUBLIC
 		CLOSE DATABASES
 	ENDPROC
 	
-**ÞUBE NO SORGULAMA
+**?UBE NO SORGULAMA
 	PROCEDURE getSubeNo()
 		this.getPath()
 		drv = this._BoyutDrive
@@ -664,10 +679,10 @@ DEFINE CLASS sayim AS Custom OLEPUBLIC
 	
 	
 	PROCEDURE getTumIlaclar()
-		**INDEX ON fieldAdý TAG oluþacakindexadi ** index oluþtur
-		**SET ORDER TO ÝNDEXADI **ÝNDDEX SEÇ
+		**INDEX ON fieldAdy TAG olu?acakindexadi ** index olu?tur
+		**SET ORDER TO YNDEXADI **YNDDEX SEÇ
 		**FIND aranacakindex
-		**SKIP **sonraki kayýda geçer bulunanlardan
+		**SKIP **sonraki kayyda geçer bulunanlardan
 		this.getPath()
 		jsonString = ""
 		BPATH = this._BoyutPath
@@ -720,7 +735,7 @@ DEFINE CLASS sayim AS Custom OLEPUBLIC
 	ENDPROC 
 	
 	
-**RAF DEÐÝÞTÝR--------------------------------------------------------------------------------------------
+**RAF DE?Y?TYR--------------------------------------------------------------------------------------------
 	PROCEDURE rafDegistir(ikkodu,cno,iffiyat,draf,byer,miktr,dreyon)
 		this.getPath()
 		gilackodu = INT(VAL(ikkodu))	
@@ -731,8 +746,10 @@ DEFINE CLASS sayim AS Custom OLEPUBLIC
 		
 		**USE &BPATH.ilacprt INDEX &BPATH.ilacprt1.idx IN 0 SHARED ALIAS prt
 		**SET ORDER TO ILACPRT1
+		
 		**alttakini ekledim
-		SET DELETED ON
+        SET DELETED ON
+		
 		USE &BPATH.ilacprt IN 0 SHARED ALIAS prt
 		SELECT prt
 		IF EMPTY(CDX(1))
@@ -753,7 +770,7 @@ DEFINE CLASS sayim AS Custom OLEPUBLIC
 		IF ilackodu != gilackodu then
 			CLOSE DATABASES
 			this.wlogout()
-			RETURN "deðer eþleþmedi"
+			RETURN "de?er e?le?medi"
 		ENDIF 
 		
 		metin = 'Kodu=' + str(prt.ilackodu) + 'CEP = ' + prt.cepno + 'Fiyat = ' + str(prt.cfiyati)
@@ -782,9 +799,9 @@ DEFINE CLASS sayim AS Custom OLEPUBLIC
 		RELEASE ALL 				
 	ENDPROC
 	
-**END RAF DEÐÝÞTÝR--------------------------------------------------------------------------------------------	
+**END RAF DE?Y?TYR--------------------------------------------------------------------------------------------	
 
-**SEPET GÝRÝÞ --------------------------------------------------------------------------------------------
+**SEPET GYRY? --------------------------------------------------------------------------------------------
 	PROCEDURE sepetGiris(sptNo,cno)
 		CLOSE DATABASES
 
@@ -815,6 +832,12 @@ DEFINE CLASS sayim AS Custom OLEPUBLIC
 		
 		SELECT sepet
 		LOCATE FOR SEPETNO = ALLTRIM(sptNo)
+		
+		**aþaðýdakini ekledim
+		 IF !FOUND() THEN
+			RETURN ""
+         ENDIF
+		
 		sepetkodu=sepet.sepetkodu
      	takipno=sepet.takipno 		 
      	sepettarih=sepet.tarih
@@ -837,13 +860,16 @@ DEFINE CLASS sayim AS Custom OLEPUBLIC
 				JSONdon = "{'subeno':'" + this.subeKod+ "','sepetno':'" + sepetkodu+ "','kapak':'" + KAPAK + "','sepetdurum':'" + SEPETDURUM + "','eczanekodu':'" + sepeteczanekodu+"','takipno':'"+sepettakipno+"'"
 				JSONdon = JSONdon + ",'faturano':'" + this.Fatnocoz(ftrrpr.faturano)+"'"
 				JSONdon = JSONdon + ",'faturano2':''"
-				JSONdon = JSONdon + ",'tarih':'" + TRANSFORM(ftrrpr.tarih)+"'"
+				**alttakini düzenledim
+				**JSONdon = JSONdon + ",'tarih':'" + TRANSFORM(ftrrpr.tarih)+"'"
+				JSONdon = JSONdon + ",'tarih':'" + TTOC(ftrrpr.tarih)+"'"
 				JSONdon = JSONdon + ",'cepno':'" + ftrrpr.cepno+"'"
 				JSONdon = JSONdon + "}"
 				
             ENDIF 
             SELECT sepet
-			REPLACE KAPAK WITH "D", SEPETDURUM WITH "" FOR SEPETNO=ALLTRIM(sptNo)
+			REPLACE KAPAK WITH "D", SEPETDURUM WITH "" 
+			**FOR SEPETNO=ALLTRIM(sptNo)
             CLOSE DATABASES
 			
 			this.wlogout()
@@ -864,18 +890,20 @@ DEFINE CLASS sayim AS Custom OLEPUBLIC
 	              SELECT sepet
 	              SELECT irsrpr
                IF sepet.tarih=DATE() .and. sepet.bitzaman > this.zamansayi(DATE(),TIME())-120    
-               **sepet.tarih=date .and. sorguda vardý
+               **sepet.tarih=date .and. sorguda vardy
                   tkpno=irsrpr.takipno
                   JSONdon = "{'subeno':'" + this.subeKod + "','sepetno':'" + sepetkodu+ "','kapak':'" + KAPAK + "','sepetdurum':'" + SEPETDURUM + "','eczanekodu':'" + sepeteczanekodu+"','takipno':'"+sepettakipno+"'"
          		  **JSONdon = JSONdon+",'faturano':"+this.Fatnocoz(irsrpr.fatseri)+",'tarih':"+irsrpr.tarih+",'cepno':"+irsrpr.cepno+"}"
          		  	JSONdon = JSONdon + ",'faturano':'" + this.Fatnocoz(irsrpr.fatseri)+"'"
 					JSONdon = JSONdon + ",'faturano2':''"
-					JSONdon = JSONdon + ",'tarih':'" + TRANSFORM(irsrpr.tarih)+"'"
+					SONdon = JSONdon + ",'tarih':'" + TTOC(irsrpr.tarih)+"'"
+					**JSONdon = JSONdon + ",'tarih':'" + TRANSFORM(irsrpr.tarih)+"'"
 					JSONdon = JSONdon + ",'cepno':'" + irsrpr.cepno+"'"
 					JSONdon = JSONdon + "}"
                	  SET DELETED on
                	  SELECT sepet
-				  REPLACE KAPAK WITH "D", SEPETDURUM WITH "" FOR SEPETNO=ALLTRIM(sptNo)
+				  REPLACE KAPAK WITH "D", SEPETDURUM WITH "" 
+				  **FOR SEPETNO=ALLTRIM(sptNo)
                	  CLOSE DATABASES
                	  this.wlogout()
                	  RETURN JSONdon
@@ -901,9 +929,9 @@ DEFINE CLASS sayim AS Custom OLEPUBLIC
 		RETURN metin
 	ENDPROC
 	
-**END SEPET GÝRÝÞ --------------------------------------------------------------------------------------------
+**END SEPET GYRY? --------------------------------------------------------------------------------------------
 
-**ZAMANSAL ÝÞLEM -------------------------------------------------------------------------------------------
+**ZAMANSAL Y?LEM -------------------------------------------------------------------------------------------
 	Procedure ZamanSayi
 	parameter ptrh,psaat
 	private zmnsy
@@ -934,7 +962,7 @@ DEFINE CLASS sayim AS Custom OLEPUBLIC
 	       dondgr=gunblm
 	endcase   
 	return dondgr
-**END ZAMANSAL ÝÞLEM -------------------------------------------------------------------------------------------
+**END ZAMANSAL Y?LEM -------------------------------------------------------------------------------------------
 
 	PROCEDURE DBKAPAT
 		CLOSE DATABASES
