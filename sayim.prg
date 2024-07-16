@@ -205,31 +205,48 @@ DEFINE CLASS sayim AS Custom OLEPUBLIC
 	PROCEDURE VeriOlustur(tabloAdi)
 		**CD "c:\net\sevkiyatkod\sayim\foxproproje\"
 		**CD "k:\data"
+		**log
+		this.writeLog("VeriOlustur - " + tabloAdi)
+		
 		subesi = SUBSTR(tabloAdi,AT('.d',tabloAdi)+2,LEN(tabloAdi)-AT('.d',tabloAdi)+1)
 		sayimD = SUBSTR(tabloAdi,4,AT('.d',tabloAdi)-4)
 		
 		INDEXADI = "sy"+sayimD+"1.i"+subesi
 		
+		**log
+		this.writeLog("Verileri Oluþtur - INDEXADI - " + INDEXADI)
+		
 		**RETURN "sayimd-"+sayimD+"+INDEXADI-"+INDEXADI+"+subesi-"+subesi+"+Tablo ady-"+tabloAdi 
 		this.getPath()
+		
+		**log
+		this.writeLog("getPath() tetiklendi")
+		
 		vAdi=""
 		**BPATH = "K:\data\"
 		BPATH = this._BoyutPath
 		
 		**IF !FILE(&BPATH.&INDEXADI) then
 		IF !FILE(BPATH+INDEXADI) then
+			**log
+			this.writeLog("index yok dbyi felan kapatacaðýz ve yeniden getpat tet,klencek")
 			USE &BPATH.&tabloAdi SHARED
 			INDEX ON REYON+TANIM+SAYANKISI TO &BPATH.&INDEXADI
 			CLOSE DATABASES
 			this.wlogout()
 			this.getPath()
+			**log
+			this.writeLog("getPath() IF !FILE(BPATH+INDEXADI) then içinde tetiklendi")
 		ENDIF
 		
 		tarih = DATE()
 		zaman = TIME()
 		
+		**log
+		this.writeLog("zaman sayi hesaplamasi öncesi")
 		zamansayisi = this.ZamanSayi(tarih,zaman)
 		zamansayisi = STR(zamansayisi)
+		this.writeLog("zaman sayi hesaplamasi sonrasý")
 		
 		use &BPATH.&tabloAdi index &BPATH.&INDEXADI SHARED ALIAS sym
 		SELECT KayitNo FROM &BPATH.&tabloAdi INTO CURSOR crs
@@ -237,6 +254,7 @@ DEFINE CLASS sayim AS Custom OLEPUBLIC
 		**this._KayitNo = RECCOUNT()+1
 		**iiiiii
 		**iiiiii
+		
 		INDEXADIIKI = "sy"+sayimD+"2.i"+subesi
 		SELECT sym
 		IF FILE(BPATH+INDEXADIIKI) then
@@ -244,13 +262,16 @@ DEFINE CLASS sayim AS Custom OLEPUBLIC
 		ELSE
 			SET INDEX TO &BPATH.&INDEXADI
 		ENDIF	
-		
+		this.writeLog("set order to go bottom")
 		SET ORDER TO "sy"+sayimD+"1"
 		GO BOTTOM 
+		this.writeLog("Append Blank Öncesi")
 		APPEND BLANK
+		this.writeLog("Append Blank Sonrasý")
 		replace KayitNo WITH recno(),Reyon WITH this._Reyon,Graf WITH this._Raf,Tanim WITH this._Tanim,SayanKisi WITH this._SayanKisi,Giren WITH this._Giren,GZaman WITH INT(VAL(zamansayisi)),IlacKodu WITH INT(VAL(this._IlacKodu)),GFiyati WITH INT(VAL(this._GFiyati)),GKutuTipi WITH this._GKutuTipi,GMiad WITH this._GMiad,GSeriNo WITH this._GSeriNo,GMiktar WITH INT(VAL(this._GMiktar)),KDegisti WITH INT(VAL(this._KDegisti))
 		**int ler gzaman, ilackodu, gfiyati, gmiktar,d fiyati, dmiktar, bmiktar, sfiyati, smiktar, kdegisti
 		**INSERT INTO &BPATH.&tabloAdi(KayitNo,Reyon,Graf,Tanim,SayanKisi,Giren,GZaman,IlacKodu,GFiyati,GKutuTipi,GMiad,GSeriNo,GMiktar,KDegisti) VALUES (this._KayitNo,this._Reyon,this._Raf,this._Tanim,this._SayanKisi,this._Giren,INT(VAL(zamansayisi)),INT(VAL(this._IlacKodu)),INT(VAL(this._GFiyati)),this._GKutuTipi,this._GMiad,this._GSeriNo,INT(VAL(this._GMiktar)),INT(VAL(this._KDegisti)))
+		this.writeLog("veriler oluþturuldu")
 		CLOSE DATABASES
 		this.wlogout()
 		**RELEASE ALL
@@ -402,7 +423,7 @@ DEFINE CLASS sayim AS Custom OLEPUBLIC
 			RETURN null
 		endif
 		
-		
+		this.writeLog("Barkot Okutma ::" + barkod)
 		
 		**USE &BPATH.ILACLAR INDEX &BPATH.ibkodu SHARED ALIAS ilc
 		USE &BPATH.ILACLAR SHARED ALIAS ilc
@@ -847,7 +868,7 @@ DEFINE CLASS sayim AS Custom OLEPUBLIC
      	sepetidosya = sepet.idosya
      	KAPAK = sepet.kapak
         SEPETDURUM = sepet.sepetdurum	
-        
+        JSONdon = ""
         IF right(sepet.idosya,1)="."	
 			SELECT ftrrpr
 			ftnovar=(TYPE("ftrrpr->faturano")="C")
@@ -1062,5 +1083,18 @@ DEFINE CLASS sayim AS Custom OLEPUBLIC
 	retu donstr 
 	ENDPROC 
 *--------------------------------------------------------
+
+	PROCEDURE writeLog(txt)
+		dosya = "C:\NET\foxlog.txt"
+		metin = TTOC(DATE()) + "  "+TIME()+"===="+txt
+		
+		STRTOFILE(metin+CHR(13) + CHR(10),dosya,.T.)
+		
+		**IF FILE(dosya) then
+			**APPEND FROM (metin) to (dosya)
+**		ELSE
+	**		STRTOFILE(metin,dosya)
+		**ENDIF 		
+	ENDPROC 	
 	
 ENDDEFINE
