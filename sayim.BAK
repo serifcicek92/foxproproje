@@ -868,7 +868,7 @@ DEFINE CLASS sayim AS Custom OLEPUBLIC
      	sepetidosya = sepet.idosya
      	KAPAK = sepet.kapak
         SEPETDURUM = sepet.sepetdurum	
-        
+        JSONdon = ""
         IF right(sepet.idosya,1)="."	
 			SELECT ftrrpr
 			ftnovar=(TYPE("ftrrpr->faturano")="C")

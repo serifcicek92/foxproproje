@@ -823,7 +823,7 @@ DEFINE CLASS sayim AS Custom OLEPUBLIC
 **END RAF DE?Y?TYR--------------------------------------------------------------------------------------------	
 
 **SEPET GYRY? --------------------------------------------------------------------------------------------
-	PROCEDURE sepetGiris(sptNo,cno)
+	PROCEDURE sepetGiris(sptNo,cno, sptDrm)
 		CLOSE DATABASES
 
 		sbno = this.getSubeNo()
@@ -889,7 +889,7 @@ DEFINE CLASS sayim AS Custom OLEPUBLIC
 				
             ENDIF 
             SELECT sepet
-			REPLACE KAPAK WITH "D", SEPETDURUM WITH "" 
+			REPLACE KAPAK WITH "D", SEPETDURUM WITH sptDrm 
 			**FOR SEPETNO=ALLTRIM(sptNo)
             CLOSE DATABASES
 			
@@ -933,7 +933,7 @@ DEFINE CLASS sayim AS Custom OLEPUBLIC
                endif  
         	SET DELETED on	
         	SELECT sepet
-			REPLACE KAPAK WITH "D", SEPETDURUM WITH "" 
+			REPLACE KAPAK WITH "D", SEPETDURUM WITH sptDrm 
 			**FOR SEPETNO=ALLTRIM(sptNo)
         	CLOSE DATABASES
         	this.wlogout()
