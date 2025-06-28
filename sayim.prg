@@ -268,7 +268,7 @@ DEFINE CLASS sayim AS Custom OLEPUBLIC
 		this.writeLog("Append Blank Öncesi")
 		APPEND BLANK
 		this.writeLog("Append Blank Sonrasý")
-		replace KayitNo WITH recno(),Reyon WITH this._Reyon,Graf WITH this._Raf,Tanim WITH this._Tanim,SayanKisi WITH this._SayanKisi,Giren WITH this._Giren,GZaman WITH INT(VAL(zamansayisi)),IlacKodu WITH INT(VAL(this._IlacKodu)),GFiyati WITH INT(VAL(this._GFiyati)),GKutuTipi WITH this._GKutuTipi,GMiad WITH this._GMiad,GSeriNo WITH this._GSeriNo,GMiktar WITH INT(VAL(this._GMiktar)),KDegisti WITH INT(VAL(this._KDegisti))
+		replace KayitNo WITH recno(),Reyon WITH this._Reyon,Graf WITH this._Raf,Tanim WITH this._Tanim,SayanKisi WITH this._SayanKisi,Giren WITH this._Giren,GZaman WITH INT(VAL(zamansayisi)),IlacKodu WITH INT(VAL(this._IlacKodu)),GFiyati WITH INT(VAL(this._GFiyati)),GKutuTipi WITH this._GKutuTipi,GMiad WITH this._GMiad,GSeriNo WITH this._GSeriNo,GMiktar WITH INT(VAL(this._GMiktar)),KDegisti WITH INT(VAL(this._KDegisti)) NEXT 1
 		**int ler gzaman, ilackodu, gfiyati, gmiktar,d fiyati, dmiktar, bmiktar, sfiyati, smiktar, kdegisti
 		**INSERT INTO &BPATH.&tabloAdi(KayitNo,Reyon,Graf,Tanim,SayanKisi,Giren,GZaman,IlacKodu,GFiyati,GKutuTipi,GMiad,GSeriNo,GMiktar,KDegisti) VALUES (this._KayitNo,this._Reyon,this._Raf,this._Tanim,this._SayanKisi,this._Giren,INT(VAL(zamansayisi)),INT(VAL(this._IlacKodu)),INT(VAL(this._GFiyati)),this._GKutuTipi,this._GMiad,this._GSeriNo,INT(VAL(this._GMiktar)),INT(VAL(this._KDegisti)))
 		this.writeLog("veriler oluþturuldu")
@@ -798,13 +798,13 @@ DEFINE CLASS sayim AS Custom OLEPUBLIC
 		IF ilackodu != gilackodu then
 			CLOSE DATABASES
 			this.wlogout()
-			RETURN "de?er e?le?medi"
+			RETURN "deger eslesmedi"
 		ENDIF 
 		
 		metin = 'Kodu=' + str(prt.ilackodu) + 'CEP = ' + prt.cepno + 'Fiyat = ' + str(prt.cfiyati)
 		
 		
-		REPLACE prt.raf WITH draf
+		REPLACE prt.raf WITH draf NEXT 1
 		**, prt.reyon WITH dreyon	
 		degisenraf = prt.raf	
 		USE
@@ -816,7 +816,7 @@ DEFINE CLASS sayim AS Custom OLEPUBLIC
 			SET ORDER TO ILACCEP1
 			SEEK STR(gilackodu,6)+cno
 			LOCATE WHILE ilackodu=gilackodu .and. cepno=ALLTRIM(cno)
-			replace cpdpilclar.beslemeyer WITH byer
+			replace cpdpilclar.beslemeyer WITH byer NEXT 1
 		ENDIF 
 		
 		
@@ -896,7 +896,7 @@ DEFINE CLASS sayim AS Custom OLEPUBLIC
 				
             ENDIF 
             SELECT sepet
-			REPLACE KAPAK WITH "D", SEPETDURUM WITH sptDrm 
+			REPLACE KAPAK WITH "D", SEPETDURUM WITH sptDrm NEXT 1
 			**FOR SEPETNO=ALLTRIM(sptNo)
             CLOSE DATABASES
 			
@@ -930,7 +930,7 @@ DEFINE CLASS sayim AS Custom OLEPUBLIC
 					JSONdon = JSONdon + "}"
                	  SET DELETED on
                	  SELECT sepet
-				  REPLACE KAPAK WITH "D", SEPETDURUM WITH "" 
+				  REPLACE KAPAK WITH "D", SEPETDURUM WITH "" NEXT 1
 				  **FOR SEPETNO=ALLTRIM(sptNo)
                	  CLOSE DATABASES
                	  this.wlogout()
@@ -940,7 +940,7 @@ DEFINE CLASS sayim AS Custom OLEPUBLIC
                endif  
         	SET DELETED on	
         	SELECT sepet
-			REPLACE KAPAK WITH "D", SEPETDURUM WITH sptDrm 
+			REPLACE KAPAK WITH "D", SEPETDURUM WITH sptDrm NEXT 1
 			**FOR SEPETNO=ALLTRIM(sptNo)
         	CLOSE DATABASES
         	this.wlogout()
