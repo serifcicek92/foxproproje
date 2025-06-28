@@ -394,7 +394,7 @@ DEFINE CLASS sayim AS Custom OLEPUBLIC
 	ENDPROC
 	
 	
-	PROCEDURE getIlacBilgileri(barkod, cno)
+	PROCEDURE getIlacBilgileri(barkod, cno, lmiadi)
 		this.getPath()
 		jsonString = ""
 		txtilacadi=""
@@ -405,6 +405,7 @@ DEFINE CLASS sayim AS Custom OLEPUBLIC
 		txtraf=""
 		txtreyon=""
 		txtHatalar=""
+		lmiadtakip=""
 		
 
 		idx = "ibkodu.idx"
@@ -473,6 +474,7 @@ DEFINE CLASS sayim AS Custom OLEPUBLIC
 			ikodukod = ALLTRIM(STR(ilc.ILACKODU))
 			txtHatalar = txtHatalar + "--ikodu.kod : "+ ikodukod + "--"
 			
+			lmiadtakip = ALLTRIM(ilc.MIADTAKIP)
 			
 			**ENDDO 
 		endif    
@@ -482,6 +484,7 @@ DEFINE CLASS sayim AS Custom OLEPUBLIC
 			ikodukod = ALLTRIM(STR(ilc.ILACKODU))
 			txtHatalar = txtHatalar + "--Found ikodu.kod : "+ ikodukod + "--"
 			**RETURN ilc.ilacadi
+			lmiadtakip = ALLTRIM(ilc.MIADTAKIP)
 		
 		endif
 		
@@ -537,7 +540,11 @@ DEFINE CLASS sayim AS Custom OLEPUBLIC
 				SET ORDER TO 1
 				
 				SEEK STR(INT(VAL(ikodukod)),6)+cno
-				LOCATE WHILE ilackodu=INT(VAL(ikodukod)) .and. cepno=ALLTRIM(cno) FOR miktari>0 .or. satismik>0 .or. cfiyati>=ilc.fiyati .and. !ISNULL(tarih) .and. (kilitli='H' .or. kilitli='')
+				IF lmiadtakip = "E" AND EMPTY(ALLTRIM(lmiadi))=.f. THEN
+					LOCATE WHILE ilackodu=INT(VAL(ikodukod)) .and. cepno=ALLTRIM(cno) FOR (miktari>0 .or. satismik>0 .or. cfiyati>=ilc.fiyati) .and. !ISNULL(tarih) .and. (kilitli='H' .or. kilitli='') .and. miad=lmiadi
+				ELSE
+					LOCATE WHILE ilackodu=INT(VAL(ikodukod)) .and. cepno=ALLTRIM(cno) FOR (miktari>0 .or. satismik>0 .or. cfiyati>=ilc.fiyati) .and. !ISNULL(tarih) .and. (kilitli='H' .or. kilitli='')
+				ENDIF  
 				test = ALLTRIM(STR(prt.ilackodu))
 				
 				txtHatalar = txtHatalar + "use ilacprt de ilaç kodu  : " + test + "--"
