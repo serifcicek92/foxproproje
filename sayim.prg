@@ -81,22 +81,29 @@ DEFINE CLASS sayim AS Custom OLEPUBLIC
 	
 	ENDPROC
 	
+	PROCEDURE getBoyutDrive
+		RETURN this._BoyutDrive
+	ENDPROC 
+	
+	PROCEDURE getBoyutPath
+		RETURN this._BoyutPath
+	ENDPROC 
+	
 	
 	Procedure getPath
 		**a = this.wlogon("serif","\\srv2003","123456")
 		**a = this.wlogon("serif","\\192.168.0.217","19921992")
 		**a = this.wlogon("um1","\\BSERVER","123456")
-		
-**SELÇUK		
+		**ANKARA
+		**a = this.wlogon("um1","\\192.168.3.19","123456")
+		**this._BoyutPath="\\192.168.3.19\BOYUT\DATA\"
+		**this._BoyutDrive="\\192.168.3.19\BOYUT\"
+**SEL?UK		
 		a = this.wlogon("um1","\\BSERVER","123456")
 		this._BoyutPath="\\BSERVER\BOYUT\DATA\"
 		this._BoyutDrive="\\BSERVER\BOYUT\"
 		
 		
-
-		*this._BoyutPath="\\192.168.3.11\Boyut\seldata\"
-		**this._BoyutDrive="\\192.168.3.11\Boyut\"
-		**a = this.wlogon("um1","\\192.168.3.11","123456")
 		
 		IF DIRECTORY("\\BSERVER\BOYUTC\SELDATA") then
 			this._BoyutDrive="\\BSERVER\BOYUTC\"
@@ -104,7 +111,14 @@ DEFINE CLASS sayim AS Custom OLEPUBLIC
 			return "oldu"
 		ENDIF
 		
-**SAMSUN ÇORUM
+		**this._BoyutPath="\\192.168.3.19\Boyut\seldata\"
+		**this._BoyutDrive="\\192.168.3.19\Boyut\"
+		**a = this.wlogon("um1","\\192.168.3.19","123456")
+		
+		
+			
+	
+**SAMSUN ?ORUM
 		**this._BoyutPath="\\10.10.204.8\Boyut\seldata\"
 		**this._BoyutDrive="\\10.10.204.8\Boyut\"
 		**a = this.wlogon("um1","\\10.10.204.8","123456")
@@ -214,7 +228,7 @@ DEFINE CLASS sayim AS Custom OLEPUBLIC
 		INDEXADI = "sy"+sayimD+"1.i"+subesi
 		
 		**log
-		**this.writeLog("Verileri Oluþtur - INDEXADI - " + INDEXADI)
+		**this.writeLog("Verileri Olu?tur - INDEXADI - " + INDEXADI)
 		
 		**RETURN "sayimd-"+sayimD+"+INDEXADI-"+INDEXADI+"+subesi-"+subesi+"+Tablo ady-"+tabloAdi 
 		this.getPath()
@@ -229,24 +243,24 @@ DEFINE CLASS sayim AS Custom OLEPUBLIC
 		**IF !FILE(&BPATH.&INDEXADI) then
 		IF !FILE(BPATH+INDEXADI) then
 			**log
-			**this.writeLog("index yok dbyi felan kapatacaðýz ve yeniden getpat tet,klencek")
+			**this.writeLog("index yok dbyi felan kapataca??z ve yeniden getpat tet,klencek")
 			USE &BPATH.&tabloAdi SHARED
 			INDEX ON REYON+TANIM+SAYANKISI TO &BPATH.&INDEXADI
 			CLOSE DATABASES
 			this.wlogout()
 			this.getPath()
 			**log
-			**this.writeLog("getPath() IF !FILE(BPATH+INDEXADI) then içinde tetiklendi")
+			**this.writeLog("getPath() IF !FILE(BPATH+INDEXADI) then i?inde tetiklendi")
 		ENDIF
 		
 		tarih = DATE()
 		zaman = TIME()
 		
 		**log
-		**this.writeLog("zaman sayi hesaplamasi öncesi")
+		**this.writeLog("zaman sayi hesaplamasi ?ncesi")
 		zamansayisi = this.ZamanSayi(tarih,zaman)
 		zamansayisi = STR(zamansayisi)
-		**this.writeLog("zaman sayi hesaplamasi sonrasý")
+		**this.writeLog("zaman sayi hesaplamasi sonras?")
 		
 		use &BPATH.&tabloAdi index &BPATH.&INDEXADI SHARED ALIAS sym
 		SELECT KayitNo FROM &BPATH.&tabloAdi INTO CURSOR crs
@@ -265,13 +279,13 @@ DEFINE CLASS sayim AS Custom OLEPUBLIC
 		**this.writeLog("set order to go bottom")
 		SET ORDER TO "sy"+sayimD+"1"
 		GO BOTTOM 
-		**this.writeLog("Append Blank Öncesi")
+		**this.writeLog("Append Blank ?ncesi")
 		APPEND BLANK
-		**this.writeLog("Append Blank Sonrasý")
+		**this.writeLog("Append Blank Sonras?")
 		replace KayitNo WITH recno(),Reyon WITH this._Reyon,Graf WITH this._Raf,Tanim WITH this._Tanim,SayanKisi WITH this._SayanKisi,Giren WITH this._Giren,GZaman WITH INT(VAL(zamansayisi)),IlacKodu WITH INT(VAL(this._IlacKodu)),GFiyati WITH INT(VAL(this._GFiyati)),GKutuTipi WITH this._GKutuTipi,GMiad WITH this._GMiad,GSeriNo WITH this._GSeriNo,GMiktar WITH INT(VAL(this._GMiktar)),KDegisti WITH INT(VAL(this._KDegisti)) NEXT 1
 		**int ler gzaman, ilackodu, gfiyati, gmiktar,d fiyati, dmiktar, bmiktar, sfiyati, smiktar, kdegisti
 		**INSERT INTO &BPATH.&tabloAdi(KayitNo,Reyon,Graf,Tanim,SayanKisi,Giren,GZaman,IlacKodu,GFiyati,GKutuTipi,GMiad,GSeriNo,GMiktar,KDegisti) VALUES (this._KayitNo,this._Reyon,this._Raf,this._Tanim,this._SayanKisi,this._Giren,INT(VAL(zamansayisi)),INT(VAL(this._IlacKodu)),INT(VAL(this._GFiyati)),this._GKutuTipi,this._GMiad,this._GSeriNo,INT(VAL(this._GMiktar)),INT(VAL(this._KDegisti)))
-		**this.writeLog("veriler oluþturuldu")
+		**this.writeLog("veriler olu?turuldu")
 		CLOSE DATABASES
 		this.wlogout()
 		**RELEASE ALL
@@ -331,7 +345,7 @@ DEFINE CLASS sayim AS Custom OLEPUBLIC
 **SAYIM DOSYASI SORGULAMA
 	PROCEDURE sayimDosyasiVarmi(dosyaAdi)
 		this.getPath()
-		IF FILE(this._BoyutPath+dosyaAdi) THEN
+		IF FILE(this._BoyutPath+dosyaAdi) = .T. THEN
 			dosya = this._BoyutPath+dosyaAdi
 			USE &dosya SHARED
 			GO top
@@ -429,14 +443,14 @@ DEFINE CLASS sayim AS Custom OLEPUBLIC
 		**USE &BPATH.ILACLAR INDEX &BPATH.ibkodu SHARED ALIAS ilc
 		USE &BPATH.ILACLAR SHARED ALIAS ilc
 		IF EMPTY(CDX(1))
-			**TEST ET ÜST
+			**TEST ET ?ST
 			SET INDEX TO &BPATH.ibkodu
 		ENDIF 
 		**SET INDEX TO &BPATH.ibkodu
 		SET ORDER TO IBKODU   && BARKODU
 		SEEK barkod
 		
-		txtHatalar = txtHatalar + "ilaçlar ilk found " +IIF(FOUND() = .T. ,"TRUE","FALSE")+"---"
+		txtHatalar = txtHatalar + "ila?lar ilk found " +IIF(FOUND() = .T. ,"TRUE","FALSE")+"---"
 		
 		IF NOT FOUND()
 			txtHatalar = txtHatalar + "Barkod Ylaclar Dosyasynda Bulunamady"
@@ -523,7 +537,7 @@ DEFINE CLASS sayim AS Custom OLEPUBLIC
 				
 				**USE &BPATH.ilacprt INDEX &BPATH.ilacprt1.idx IN 0 SHARED ALIAS prt
 				USE &BPATH.ilacprt IN 0 SHARED ALIAS prt
-				**aþaðýdakini ekledim
+				**a?a??dakini ekledim
 				SET DELETED ON
 				
 				SELECT prt
@@ -547,7 +561,7 @@ DEFINE CLASS sayim AS Custom OLEPUBLIC
 				ENDIF  
 				test = ALLTRIM(STR(prt.ilackodu))
 				
-				txtHatalar = txtHatalar + "use ilacprt de ilaç kodu  : " + test + "--"
+				txtHatalar = txtHatalar + "use ilacprt de ila? kodu  : " + test + "--"
 				**ileridegeri=0
 				**gidilecekdeger=0
 				**varsayilanfiyat = prt.cfiyati
@@ -573,7 +587,7 @@ DEFINE CLASS sayim AS Custom OLEPUBLIC
 				
 				SELECT prt
 				
-				**aþaðýdakini ekledim 
+				**a?a??dakini ekledim 
 				IF LEN(ALLTRIM(prt.raf))<6 then
 					AMBARRAFF = ALLTRIM(prt.raf)+" "+AMBARRAFF
 				ELSE LEN(ALLTRIM(prt.raf))>5
@@ -587,7 +601,7 @@ DEFINE CLASS sayim AS Custom OLEPUBLIC
 				jsonString = jsonString + "'ilackodu':'"+ALLTRIM(STR(ilc.ilackodu))+"',"
 				jsonString = jsonString + "'kututipi':'"+ALLTRIM(prt.kututipi)+"',"
 				jsonString = jsonString + "'fiyati':'"+ALLTRIM(STR(prt.CFiyati,15))+"',"
-				**aþaðýdaki düzenlendi
+				**a?a??daki d?zenlendi
 				**jsonString = jsonString + "'raf':'"+ALLTRIM(prt.raf)+"',"
 				jsonString = jsonString + "'raf':'"+ALLTRIM(AMBARRAFF)+"',"
 				jsonString = jsonString + "'miktari':'"+ALLTRIM(STR(prt.miktari))+"',"
@@ -637,7 +651,7 @@ DEFINE CLASS sayim AS Custom OLEPUBLIC
 		
 		
 	ENDPROC
-**YLAÇ PARTYDEN SORGULAMA
+**YLA? PARTYDEN SORGULAMA
 	PROCEDURE getIlacPrt(Kodu,Cno)
 		this.getPath()
 		jsonString = ""
@@ -650,7 +664,7 @@ DEFINE CLASS sayim AS Custom OLEPUBLIC
 			SET INDEX TO &BPATH.ibkodu
 		ENDIF 
 		SET ORDER TO IBKODU   && BARKODU
-		**eklendi üst taraf
+		**eklendi ?st taraf
 		SELECT Miktari,Reyon,Raf,fiyati,Kututipi FROM ilaclar WHERE ILACKODU = INT(VAL(ALLTRIM(Kodu))) INTO CURSOR crs
 		**SELECT Miktari,Reyon,Raf,Cfiyati,Kututipi FROM ilacprt WHERE ILACKODU = INT(VAL(ALLTRIM(Kodu))) AND Cepno=Cno INTO CURSOR crs
 		SELECT crs
@@ -708,9 +722,9 @@ DEFINE CLASS sayim AS Custom OLEPUBLIC
 	
 	PROCEDURE getTumIlaclar()
 		**INDEX ON fieldAdy TAG olu?acakindexadi ** index olu?tur
-		**SET ORDER TO YNDEXADI **YNDDEX SEÇ
+		**SET ORDER TO YNDEXADI **YNDDEX SE?
 		**FIND aranacakindex
-		**SKIP **sonraki kayyda geçer bulunanlardan
+		**SKIP **sonraki kayyda ge?er bulunanlardan
 		this.getPath()
 		jsonString = ""
 		BPATH = this._BoyutPath
@@ -839,7 +853,7 @@ DEFINE CLASS sayim AS Custom OLEPUBLIC
 		BPATH = this._BoyutPath
 		**STKPATH = this.STKPATH
 		
-		**sepetler için hangi tablo varsa onu al
+		**sepetler i?in hangi tablo varsa onu al
     	IF FILE(BPATH+"sepet.dbf")
 		   USE &BPATH.sepet SHARED
 		ELSE
@@ -861,7 +875,7 @@ DEFINE CLASS sayim AS Custom OLEPUBLIC
 		SELECT sepet
 		LOCATE FOR SEPETNO = ALLTRIM(sptNo)
 		
-		**aþaðýdakini ekledim
+		**a?a??dakini ekledim
 		 IF !FOUND() THEN
 			RETURN ""
          ENDIF
@@ -888,7 +902,7 @@ DEFINE CLASS sayim AS Custom OLEPUBLIC
 				JSONdon = "{'subeno':'" + this.subeKod+ "','sepetno':'" + sepetkodu+ "','kapak':'" + KAPAK + "','sepetdurum':'" + SEPETDURUM + "','eczanekodu':'" + sepeteczanekodu+"','takipno':'"+sepettakipno+"'"
 				JSONdon = JSONdon + ",'faturano':'" + this.Fatnocoz(ftrrpr.faturano)+"'"
 				JSONdon = JSONdon + ",'faturano2':''"
-				**alttakini düzenledim
+				**alttakini d?zenledim
 				**JSONdon = JSONdon + ",'tarih':'" + TRANSFORM(ftrrpr.tarih)+"'"
 				JSONdon = JSONdon + ",'tarih':'" + TTOC(ftrrpr.tarih)+"'"
 				JSONdon = JSONdon + ",'cepno':'" + ftrrpr.cepno+"'"
