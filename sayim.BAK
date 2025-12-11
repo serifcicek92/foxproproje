@@ -99,9 +99,9 @@ DEFINE CLASS sayim AS Custom OLEPUBLIC
 		**this._BoyutPath="\\192.168.3.19\BOYUT\DATA\"
 		**this._BoyutDrive="\\192.168.3.19\BOYUT\"
 **SEL?UK		
-		**a = this.wlogon("um1","\\BSERVER","123456")
-		**this._BoyutPath="\\BSERVER\BOYUT\DATA\"
-		**this._BoyutDrive="\\BSERVER\BOYUT\"
+		a = this.wlogon("um1","\\BSERVER","123456")
+		this._BoyutPath="\\BSERVER\BOYUT\DATA\"
+		this._BoyutDrive="\\BSERVER\BOYUT\"
 		
 		
 		
@@ -111,9 +111,9 @@ DEFINE CLASS sayim AS Custom OLEPUBLIC
 			return "oldu"
 		ENDIF
 		
-		this._BoyutPath="\\192.168.3.19\Boyut\seldata\"
-		this._BoyutDrive="\\192.168.3.19\Boyut\"
-		a = this.wlogon("um1","\\192.168.3.19","123456")
+		**this._BoyutPath="\\192.168.3.19\Boyut\seldata\"
+		**this._BoyutDrive="\\192.168.3.19\Boyut\"
+		**a = this.wlogon("um1","\\192.168.3.19","123456")
 		
 		
 			
@@ -1117,5 +1117,369 @@ DEFINE CLASS sayim AS Custom OLEPUBLIC
 	**		STRTOFILE(metin,dosya)
 		**ENDIF 		
 	ENDPROC 	
+	
+
+
+*------------------------------------------------------
+*------------------------------------------------------
+*------------------------------------------------------
+*-- public setter
+   PROCEDURE SetSayimDosyasi(cDosya)
+      THIS._SayimDosyasi = cDosya
+   ENDPROC
+   
+*====================================================
+PROCEDURE jsonParse(cJson)
+*====================================================
+    LOCAL oRet, i, cPairs, aPairs[1], nCount
+    LOCAL cPair, nColon, cKey, cVal
+    
+    *--- Temizlik
+    cJson = STRTRAN(cJson, CHR(13), "")
+    cJson = STRTRAN(cJson, CHR(10), "")
+    cJson = STRTRAN(cJson, CHR(9), "")
+    cJson = ALLTRIM(cJson)
+    
+    *--- Dýþ { } kaldýr
+    IF LEFT(cJson, 1) = "{"
+        cJson = SUBSTR(cJson, 2)
+    ENDIF
+    IF RIGHT(cJson, 1) = "}"
+        cJson = LEFT(cJson, LEN(cJson) - 1)
+    ENDIF
+    
+    *--- Obje oluþtur
+    oRet = CREATEOBJECT("Empty")
+    
+    *--- Basit split: "Key":"Value", þeklinde ayýr
+    LOCAL cBuffer, lInString, nLen, cChar, cPrevChar
+    cBuffer = ""
+    lInString = .F.
+    nLen = LEN(cJson)
+    
+    DIMENSION aPairs[1]
+    LOCAL nPairCount
+    nPairCount = 0
+    
+    FOR i = 1 TO nLen
+        cChar = SUBSTR(cJson, i, 1)
+        cPrevChar = IIF(i > 1, SUBSTR(cJson, i - 1, 1), "")
+        
+        *--- String içinde mi kontrol et
+        IF cChar = '"' AND cPrevChar != "\"
+            lInString = !lInString
+        ENDIF
+        
+        *--- Virgül bulunca ayýr (ama string içinde deðilse)
+        IF cChar = "," AND !lInString
+            nPairCount = nPairCount + 1
+            DIMENSION aPairs[nPairCount]
+            aPairs[nPairCount] = cBuffer
+            cBuffer = ""
+        ELSE
+            cBuffer = cBuffer + cChar
+        ENDIF
+    ENDFOR
+    
+    *--- Son pair'i ekle
+    IF !EMPTY(cBuffer)
+        nPairCount = nPairCount + 1
+        DIMENSION aPairs[nPairCount]
+        aPairs[nPairCount] = cBuffer
+    ENDIF
+    
+    *--- Her pair'i iþle
+    FOR i = 1 TO nPairCount
+        cPair = ALLTRIM(aPairs[i])
+        
+        *--- Ýlk : karakterini bul (value içinde : olabilir)
+        nColon = AT(":", cPair)
+        
+        IF nColon > 0
+            *--- Key
+            cKey = ALLTRIM(LEFT(cPair, nColon - 1))
+            cKey = STRTRAN(cKey, '"', "")
+            
+            *--- Value
+            cVal = ALLTRIM(SUBSTR(cPair, nColon + 1))
+            cVal = STRTRAN(cVal, '"', "")
+            
+            *--- null kontrolü
+            IF UPPER(cVal) == "NULL"
+                cVal = ""
+            ENDIF
+            
+            *--- Boolean kontrolü
+            IF UPPER(cVal) == "TRUE"
+                cVal = .T.
+            ENDIF
+            IF UPPER(cVal) == "FALSE"
+                cVal = .F.
+            ENDIF
+            
+            *--- Sayý kontrolü (sadece rakamsa)
+            **IF ISDIGIT(ALLTRIM(cVal)) OR (LEFT(ALLTRIM(cVal), 1) = "-" AND ISDIGIT(SUBSTR(ALLTRIM(cVal), 2)))
+                **cVal = VAL(cVal)
+            **ENDIF
+            
+            *--- Property ekle
+            TRY
+                ADDPROPERTY(oRet, cKey, cVal)
+            CATCH
+                *--- Hatalý key varsa atla
+            ENDTRY
+        ENDIF
+    ENDFOR
+    
+    RETURN oRet
+ENDPROC
+
+
+
+	*====================================================
+	PROCEDURE SayimKayitEkle(cJson)
+	*====================================================
+		LOCAL oJson, bPath, tablo, index1, lnRecNo
+		oJson = this.jsonParse(cJson)
+		
+		IF ISNULL(oJson)    
+			MESSAGEBOX("JSON parse edilemedi!")    
+			RETURN .F.
+		ENDIF
+		
+		DISPLAY MEMORY LIKE oJson.* TO FILE c:\net\jsonProps.txt
+		
+		THIS.getPath()
+		bPath  = THIS._BoyutPath
+		tablo  = THIS._SayimDosyasi
+		index1 = "sy" + SUBSTR(tablo,4,AT(".d",tablo)-4) + "1.i" + SUBSTR(tablo,AT(".d",tablo)+2)
+
+		IF !FILE(bPath + index1 + ".idx")
+		   USE (bPath + tablo) SHARED
+		   INDEX ON Reyon + Tanim + Sayankisi TO (bPath + index1)
+		   USE
+		ENDIF
+
+		USE (bPath + tablo) INDEX (bPath + index1) SHARED AGAIN ALIAS sym
+		SELECT sym
+		APPEND BLANK
+		lnRecNo = RECNO("sym")
+
+		tarih = DATE()
+		zaman = TIME()		
+		**log
+		**this.writeLog("zaman sayi hesaplamasi ?ncesi")
+		zamansayisi = this.ZamanSayi(tarih,zaman)
+		zamansayisi = STR(zamansayisi)
+		
+		REPLACE ;
+		   KayitNo    WITH lnRecNo,					 ; 
+		   Reyon      WITH PADR(oJson.Reyon,2),      ;
+		   Tanim      WITH PADR(oJson.Tanim,5),      ;
+		   Reyontip   WITH PADR(oJson.Reyontip,1),   ;
+		   Sayankisi  WITH PADR(oJson.Sayankisi,10), ;
+		   Giren      WITH PADR(oJson.Giren,8),      ;
+		   L2dvar     WITH PADR(oJson.L2dvar,1),     ;
+		   Gzaman     WITH VAL(zamansayisi),         ;
+		   Ilackodu   WITH VAL(oJson.Ilackodu),      ;
+		   Gfiyati    WITH VAL(oJson.Gfiyati),       ;
+		   Gkututipi  WITH PADR(oJson.Gkututipi,1),  ;
+		   Gmiad      WITH PADR(oJson.Gmiad,4),      ;
+		   Gserino    WITH PADR(oJson.Gserino,10),   ;
+		   Gmiktar    WITH VAL(oJson.Gmiktar),       ;
+		   Graf       WITH PADR(oJson.Graf,5),       ;
+		   Dfiyati    WITH VAL(oJson.Dfiyati),       ;
+		   Dkututipi  WITH PADR(oJson.Dkututipi,1),  ;
+		   Dmiad      WITH PADR(oJson.Dmiad,4),      ;
+		   Dmiktar    WITH VAL(oJson.Dmiktar),       ;
+		   Duzelten   WITH PADR(oJson.Duzelten,10),  ;
+		   Daciklama  WITH PADR(oJson.Daciklama,25), ;
+		   Bmiktar    WITH VAL(oJson.Bmiktar),       ;
+		   Bfisno     WITH PADR(oJson.Bfisno,6),     ;
+		   Bfissirano WITH PADR(oJson.Bfissirano,2), ;
+		   Breyon     WITH PADR(oJson.Breyon,2),     ;
+		   Braf       WITH PADR(oJson.Braf,5),       ;
+		   Sfiyati    WITH VAL(oJson.Sfiyati),       ;
+		   Skututipi  WITH PADR(oJson.Skututipi,1),  ;
+		   Smiad      WITH PADR(oJson.Smiad,4),      ;
+		   Smiktar    WITH VAL(oJson.Smiktar),       ;
+		   Saciklama  WITH PADR(oJson.Saciklama,25), ;
+		   Sduzelten  WITH PADR(oJson.Sduzelten,10), ;
+		   Kdegisti   WITH VAL(oJson.Kdegisti),      ;
+		   Kayitb     WITH PADR(oJson.Kayitb,10),    ;
+		   Bduzelt    WITH VAL(oJson.Bduzelt),       ;
+		   Baciklama  WITH PADR(oJson.Baciklama,25), ;
+		   Bduzelten  WITH PADR(oJson.Bduzelten,10)
+		CLOSE DATABASES
+		RETURN "OK:"+TRANSFORM(lnRecNo)
+	ENDPROC
+
+	*====================================================
+	PROCEDURE SayimKayitGuncelle(cJson)
+	*====================================================        && {"KayitNo":123,"Reyon":"AA", ... 37 alan }
+		LOCAL oJson, cPath, cTable, returnVal, lnRecNo
+
+		oJson = this.jsonParse(cJson)   && jsonParse.prg yukarýdaki gibi
+		THIS.getPath()
+		cPath  = THIS._BoyutPath
+		cTable = THIS._SayimDosyasi
+		
+		lnKayitNo = VAL(oJson.KayitNo)
+
+		USE (cPath + cTable) SHARED AGAIN ALIAS sym
+		LOCATE FOR kayitno = lnKayitNo
+		*SELECT sym
+
+		*lnRecNo = VAL(oJson.KayitNo)
+		returnVal = ""
+		*IF RECCOUNT() >= lnRecNo AND lnRecNo > 0
+		IF found() >= lnRecNo AND lnRecNo > 0
+		   *GOTO lnRecNo
+		   IF !DELETED()
+		      *----- 3) güncelle (eski REPLACE bloklarý) -----
+		      REPLACE ;
+		         Graf      WITH PADR(oJson.Graf,5),       ;
+		         Gzaman    WITH VAL(oJson.Gzaman),        ;
+		         Gfiyati   WITH VAL(oJson.Gfiyati),       ;
+		         Gkututipi WITH PADR(oJson.Gkututipi,1),  ;
+		         Gmiktar   WITH VAL(oJson.Gmiktar),       ;
+		         Dfiyati   WITH VAL(oJson.Dfiyati),       ;
+		         Dkututipi WITH PADR(oJson.Dkututipi,1),  ;
+		         Dmiad     WITH PADR(oJson.Dmiad,4),      ;
+		         Dmiktar   WITH VAL(oJson.Dmiktar),       ;
+		         Duzelten  WITH PADR(oJson.Duzelten,10),  ;
+		         Daciklama WITH PADR(oJson.Daciklama,25), ;
+		         Bmiktar   WITH VAL(oJson.Bmiktar),       ;
+		         Bfisno    WITH PADR(oJson.Bfisno,6),     ;
+		         Bfissirano WITH PADR(oJson.Bfissirano,2),;
+		         Breyon    WITH PADR(oJson.Breyon,2),     ;
+		         Braf      WITH PADR(oJson.Braf,5),       ;
+		         Sfiyati   WITH VAL(oJson.Sfiyati),       ;
+		         Skututipi WITH PADR(oJson.Skututipi,1),  ;
+		         Smiad     WITH PADR(oJson.Smiad,4),      ;
+		         Smiktar   WITH VAL(oJson.Smiktar),       ;
+		         Saciklama WITH PADR(oJson.Saciklama,25), ;
+		         Sduzelten WITH PADR(oJson.Sduzelten,10), ;
+		         Kdegisti  WITH VAL(oJson.Kdegisti),      ;
+		         Kayitb    WITH PADR(oJson.Kayitb,10),    ;
+		         Bduzelt   WITH VAL(oJson.Bduzelt),       ;
+		         Baciklama WITH PADR(oJson.Baciklama,25), ;
+		         Bduzelten WITH PADR(oJson.Bduzelten,10)
+		      returnVal = "OK"
+		   ELSE
+		      returnVal = THIS.SayimKayitEkle(cJson)   && tek JSON gonder
+		   ENDIF
+		ELSE
+		   returnVal = THIS.SayimKayitEkle(cJson)
+		ENDIF
+
+		USE          && sadece bu dosyayý kapat
+		CLOSE DATABASES
+		RETURN returnVal
+	ENDPROC
+	*====================================================
+	PROCEDURE SayimKayitSil(cJson)
+	*====================================================
+	LOCAL oJson, cPath, cTable, lnRecNo
+
+	oJson   = this.jsonParse(cJson)   && jsonParse.prg yukarýdaki gibi
+	*lnRecNo = VAL(oJson.KayitNo)
+	lnKayitNo = VAL(oJson.KayitNo)
+	THIS.getPath()
+	cPath  = THIS._BoyutPath
+	cTable = THIS._SayimDosyasi
+
+	USE (cPath + cTable) SHARED AGAIN ALIAS sym
+	LOCATE FOR kayitno= lnKayitNo
+	*SELECT sym
+	*IF RECCOUNT() >= lnRecNo AND lnRecNo > 0
+	IF FOUND()
+	   *GOTO lnRecNo
+	   IF !DELETED()
+	      DELETE           && sadece bayrak
+	      *PACK            && toplu saatlerde çalýþtýr
+	   ENDIF
+	ENDIF
+
+	CLOSE DATABASES
+	RETURN "OK"
+	ENDPROC	
+	
+	
+	*====================================================
+	PROCEDURE GetSayimListesi(tcTanim, tcSayankisi)
+	*====================================================
+	*-- parametre zorunlu
+	IF EMPTY(tcTanim) OR EMPTY(tcSayankisi
+	    RETURN "[]"
+	ENDIF
+
+	LOCAL bPath, tablo, index1, lcJson, lnCnt, i, cName, cVal, cType, lnFlds, laFld[1]
+
+	THIS.getPath()
+	bPath  = THIS._BoyutPath
+	tablo  = THIS._SayimDosyasi
+	index1 = "sy" + SUBSTR(tablo,4,AT(".d",tablo)-4) + "1.i" + SUBSTR(tablo,AT(".d",tablo)+2)
+
+	*-- index yoksa oluþtur (ayný insert mantýðý)
+	IF !FILE(bPath + index1 + ".idx")
+	    USE (bPath + tablo) SHARED
+	    INDEX ON Reyon + Tanim + Sayankisi TO (bPath + index1)
+	    USE
+	ENDIF
+
+	*-- indexli aç
+	USE (bPath + tablo) INDEX (bPath + index1) SHARED AGAIN ALIAS sym
+	SELECT sym
+
+	*-- silinmemiþ + tanim + sayankisi
+	SET FILTER TO !DELETED() ;
+	        AND Tanim  = tcTanim ;
+	        AND Sayankisi = tcSayankisi
+	GO TOP
+
+	*-- JSON array oluþtur
+	lcJson = "["
+	lnCnt  = 0
+
+	SCAN
+	    lnCnt = lnCnt + 1
+	    lcJson = lcJson + IIF(lnCnt > 1, ",", "") + "{"
+
+	    lnFlds = AFIELDS(laFld, "sym")
+	    FOR i = 1 TO lnFlds
+	        cName = laFld(i,1)
+	        cType = laFld(i,2)
+	        cVal  = EVAL(cName)
+
+	        IF ISNULL(cVal) OR EMPTY(cVal)
+	            lcJson = lcJson + '"' + cName + '":null'
+	        ELSE
+	            DO CASE
+	                CASE cType $ "N Y F B"   && sayýsal
+	                    lcJson = lcJson + '"' + cName + '":' + TRANSFORM(cVal)
+	                CASE cType = "L"          && logical
+	                    lcJson = lcJson + '"' + cName + '":' + IIF(cVal, "true", "false")
+	                CASE cType $ "C M"       && string / memo
+	                    cVal = STRTRAN(cVal, "\", "\\")
+	                    cVal = STRTRAN(cVal, '"', '\"')
+	                    lcJson = lcJson + '"' + cName + '":"' + cVal + '"'
+	                OTHERWISE                 && date / datetime
+	                    lcJson = lcJson + '"' + cName + '":"' + TTOC(cVal,3) + '"'
+	            ENDCASE
+	        ENDIF
+	        IF i < lnFlds
+	            lcJson = lcJson + ","
+	        ENDIF
+	    ENDFOR
+	    lcJson = lcJson + "}"
+	ENDSCAN
+
+	lcJson = lcJson + "]"
+
+	CLOSE DATABASES
+	RETURN lcJson
+	ENDPROC
+		
 	
 ENDDEFINE
