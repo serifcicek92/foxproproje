@@ -1247,7 +1247,7 @@ ENDPROC
 			RETURN .F.
 		ENDIF
 		
-		DISPLAY MEMORY LIKE oJson.* TO FILE c:\net\jsonProps.txt
+		*DISPLAY MEMORY LIKE oJson.* TO FILE c:\net\jsonProps.txt
 		
 		THIS.getPath()
 		bPath  = THIS._BoyutPath

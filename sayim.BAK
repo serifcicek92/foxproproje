@@ -1410,7 +1410,7 @@ ENDPROC
 	PROCEDURE GetSayimListesi(tcTanim, tcSayankisi)
 	*====================================================
 	*-- parametre zorunlu
-	IF EMPTY(tcTanim) OR EMPTY(tcSayankisi
+	IF EMPTY(tcTanim) OR EMPTY(tcSayankisi)
 	    RETURN "[]"
 	ENDIF
 
