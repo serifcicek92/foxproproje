@@ -1252,11 +1252,19 @@ ENDPROC
 		THIS.getPath()
 		bPath  = THIS._BoyutPath
 		tablo  = THIS._SayimDosyasi
-		index1 = "sy" + SUBSTR(tablo,4,AT(".d",tablo)-4) + "1.i" + SUBSTR(tablo,AT(".d",tablo)+2)
+		
+		subesi = SUBSTR(tablo,AT('.d',tablo)+2,LEN(tablo)-AT('.d',tablo)+1)
+		sayimD = SUBSTR(tablo,4,AT('.d',tablo)-4)
+		
+		*index1 = "sy" + SUBSTR(tablo,4,AT(".d",tablo)-4) + "1.i" + SUBSTR(tablo,AT(".d",tablo)+2)
+		index1 = "sy"+sayimD+"1.i"+subesi
 
-		IF !FILE(bPath + index1 + ".idx")
+		IF !FILE(bPath + index1)
 		   USE (bPath + tablo) SHARED
 		   INDEX ON Reyon + Tanim + Sayankisi TO (bPath + index1)
+		   CLOSE DATABASES
+		   this.wlogout()
+		   this.getPath()
 		   USE
 		ENDIF
 
