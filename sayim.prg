@@ -1258,9 +1258,25 @@ ENDPROC
 		
 		*index1 = "sy" + SUBSTR(tablo,4,AT(".d",tablo)-4) + "1.i" + SUBSTR(tablo,AT(".d",tablo)+2)
 		index1 = "sy"+sayimD+"1.i"+subesi
+		index2 = "sy"+sayimD+"2.i"+subesi
+		
+
+		**IF !FILE(bPath + index1)
+		   **USE (bPath + tablo) SHARED
+		   *INDEX ON Reyon + Tanim + Sayankisi TO (bPath + index1)
+		   **CLOSE DATABASES
+		   **this.wlogout()
+		   **this.getPath()
+		   **USE
+		**ENDIF
+		
+		**USE (bPath + tablo) INDEX (bPath + index1) SHARED AGAIN ALIAS sym
+		
 
 		IF !FILE(bPath + index1)
 		   USE (bPath + tablo) SHARED
+		   INDEX ON Reyon + Tanim + Sayankisi TO (bPath + index1)
+       	   index on str(ilackodu,6)+reyon+tanim+sayankisi to (bPath + index2)
 		   INDEX ON Reyon + Tanim + Sayankisi TO (bPath + index1)
 		   CLOSE DATABASES
 		   this.wlogout()
@@ -1268,10 +1284,16 @@ ENDPROC
 		   USE
 		ENDIF
 
-		USE (bPath + tablo) INDEX (bPath + index1) SHARED AGAIN ALIAS sym
+		USE (bPath + tablo) INDEX (bPath + index1), (bPath + index2) SHARED AGAIN ALIAS sym
 		SELECT sym
+		
+		SET ORDER TO "sy"+sayimD+"1"
+		
 		APPEND BLANK
 		lnRecNo = RECNO("sym")
+
+		
+
 
 		tarih = DATE()
 		zaman = TIME()		
