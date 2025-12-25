@@ -1283,11 +1283,20 @@ ENDPROC
 		   this.getPath()
 		   USE
 		ENDIF
+		
+		**IF !FILE(bPath + index2)
+		   **USE (bPath + tablo) SHARED
+       	   **index on str(ilackodu,6)+reyon+tanim+sayankisi to (bPath + index2)
+		   **CLOSE DATABASES
+		   **this.wlogout()
+		   **this.getPath()
+		   **USE		
+		**ENDIF
 
 		USE (bPath + tablo) INDEX (bPath + index1), (bPath + index2) SHARED AGAIN ALIAS sym
 		SELECT sym
 		
-		SET ORDER TO "sy"+sayimD+"1"
+		**SET ORDER TO "sy"+sayimD+"1"
 		
 		APPEND BLANK
 		lnRecNo = RECNO("sym")
@@ -1336,10 +1345,10 @@ ENDPROC
 		   Saciklama  WITH PADR(oJson.Saciklama,25), ;
 		   Sduzelten  WITH PADR(oJson.Sduzelten,10), ;
 		   Kdegisti   WITH VAL(oJson.Kdegisti),      ;
-		   Kayitb     WITH PADR(oJson.Kayitb,10),    ;
-		   Bduzelt    WITH VAL(oJson.Bduzelt),       ;
-		   Baciklama  WITH PADR(oJson.Baciklama,25), ;
-		   Bduzelten  WITH PADR(oJson.Bduzelten,10)
+		   Kayitb     WITH PADR(oJson.Kayitb,10)
+		   *Bduzelten  WITH PADR(oJson.Bduzelten,10)
+		   *Baciklama  WITH PADR(oJson.Baciklama,25), ;
+		   *Bduzelt    WITH VAL(oJson.Bduzelt),
 		CLOSE DATABASES
 		RETURN "OK:"+TRANSFORM(lnRecNo)
 	ENDPROC
@@ -1419,15 +1428,22 @@ ENDPROC
 	cPath  = THIS._BoyutPath
 	cTable = THIS._SayimDosyasi
 
-	USE (cPath + cTable) SHARED AGAIN ALIAS sym
-	LOCATE FOR kayitno= lnKayitNo
+	subesi = SUBSTR(cTable ,AT('.d',cTable )+2,LEN(cTable )-AT('.d',cTable )+1)
+	sayimD = SUBSTR(cTable ,4,AT('.d',cTable )-4)
+	
+	index1 = "sy"+sayimD+"1.i"+subesi
+	index2 = "sy"+sayimD+"2.i"+subesi
+	
+	USE (cPath + cTable) INDEX (cPath + index1), (cPath + index2)  SHARED AGAIN ALIAS sym
+	SELECT sym
+	LOCATE FOR kayitno = lnKayitNo
 	*SELECT sym
 	*IF RECCOUNT() >= lnRecNo AND lnRecNo > 0
 	IF FOUND()
 	   *GOTO lnRecNo
 	   IF !DELETED()
 	      DELETE           && sadece bayrak
-	      *PACK            && toplu saatlerde çalýþtýr
+	      *PACK
 	   ENDIF
 	ENDIF
 
@@ -1441,6 +1457,7 @@ ENDPROC
 	*====================================================
 	*-- parametre zorunlu
 	IF EMPTY(tcTanim) OR EMPTY(tcSayankisi)
+		CLOSE DATABASES
 	    RETURN "[]"
 	ENDIF
 
